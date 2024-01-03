@@ -64,7 +64,7 @@ const Sphere = () => {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.z = 20;
+    camera.position.z = window.innerWidth < 600 ? 40 : 20; // Adjust camera position for mobile view
     scene.add(camera);
 
     // Renderer
@@ -78,7 +78,7 @@ const Sphere = () => {
     controls.enableDamping = true;
     controls.enablePan = false;
     controls.enableZoom = true;
-    controls.autoRotate = false;
+    controls.autoRotate = true;
 
     // Add label for Earth
     const fontLoader = new FontLoader();
@@ -108,6 +108,7 @@ const Sphere = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.position.z = window.innerWidth < 600 ? 40 : 20; // Adjust camera position for mobile view on resize
     };
 
     window.addEventListener("resize", handleResize);
@@ -157,37 +158,37 @@ const Sphere = () => {
 
   return (
     <>
-    <canvas ref={canvasRef} className="webgl" />
-    <Container maxWidth="sm" style={{ position: "absolute", bottom: "20px", left: "20px" }}>
-      <Paper elevation={0} style={{ padding: "20px", backgroundColor: "transparent", color: "white" }}>
-        <Typography variant="h6" gutterBottom>
-          Earth Information
-        </Typography>
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Average Temperature:</span> 15°C (59°F)
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Size:</span> Diameter of approximately 12,742 kilometers (7,918 miles)
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Distance from the Sun:</span> Approximately 149.6 million kilometers (93 million miles)
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Orbital Period:</span> About 365.25 Earth days
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Rotation Period:</span> About 24 hours
-          </li>
-        </ul>
-        <Typography variant="body2" color="white">
-          Earth is the third planet from the Sun and the only astronomical object known to harbor life.
-          It is often referred to as the "Blue Planet" due to its abundant water resources.
-        </Typography>
-        {/* Add more information as needed */}
-      </Paper>
-    </Container>
-  </>
+      <canvas ref={canvasRef} className="webgl" />
+      <Container maxWidth="sm" style={{ position: "absolute", bottom: "20px", left: "20px" }}>
+        <Paper elevation={0} style={{ padding: "20px", backgroundColor: "transparent", color: "white" }}>
+          <Typography variant="h6" gutterBottom>
+            Earth Information
+          </Typography>
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Average Temperature:</span> 15°C (59°F)
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Size:</span> Diameter of approximately 12,742 kilometers (7,918 miles)
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Distance from the Sun:</span> Approximately 149.6 million kilometers (93 million miles)
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Orbital Period:</span> About 365.25 Earth days
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Rotation Period:</span> About 24 hours
+            </li>
+          </ul>
+          <Typography variant="body2" color="white">
+            Earth is the third planet from the Sun and the only astronomical object known to harbor life.
+            It is often referred to as the "Blue Planet" due to its abundant water resources.
+          </Typography>
+          {/* Add more information as needed */}
+        </Paper>
+      </Container>
+    </>
   );
 };
 

@@ -54,7 +54,11 @@ const Saturn = () => {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.z = 15; // Adjusted the camera position
+
+    // Adjust camera distance based on screen width for mobile view
+    const isMobile = window.innerWidth <= 768;
+    camera.position.z = isMobile ? 40 : 15; // Adjusted the camera position
+
     scene.add(camera);
 
     // Renderer

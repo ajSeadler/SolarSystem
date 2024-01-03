@@ -67,7 +67,11 @@ const Mars = () => {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.z = 25;
+    
+    // Adjust camera distance based on screen width
+    const isMobile = window.innerWidth <= 768;
+    camera.position.z = isMobile ? 35 : 25;
+
     scene.add(camera);
 
     // Renderer
@@ -94,14 +98,14 @@ const Mars = () => {
       marsLabelMesh.position.set(0, 5, 0);
       scene.add(marsLabelMesh);
 
-      const moon1LabelGeometry = new TextGeometry("", { font, size: 0.2, height: 0.05 });
-      const moon1LabelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const moon1LabelGeometry = new TextGeometry("Phobos", { font, size: 0.2, height: 0.05 });
+      const moon1LabelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
       moon1LabelMesh = new THREE.Mesh(moon1LabelGeometry, moon1LabelMaterial);
       moon1LabelMesh.position.set(6, 0.7, 0);
       scene.add(moon1LabelMesh);
 
-      const moon2LabelGeometry = new TextGeometry("", { font, size: 0.2, height: 0.05 });
-      const moon2LabelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const moon2LabelGeometry = new TextGeometry("Deimos", { font, size: 0.2, height: 0.05 });
+      const moon2LabelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
       moon2LabelMesh = new THREE.Mesh(moon2LabelGeometry, moon2LabelMaterial);
       moon2LabelMesh.position.set(8, 0.4, 0);
       scene.add(moon2LabelMesh);

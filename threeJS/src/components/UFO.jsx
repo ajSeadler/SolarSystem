@@ -4,19 +4,18 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import gsap from "gsap";
-import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 
 const HomePage = () => {
   const canvasRef = useRef();
   const animationRef = useRef();
   const isPageVisible = useRef(true);
 
+  const camera = useRef(null);
+  const light = useRef(null);
+
   const handleVisibilityChange = () => {
     isPageVisible.current = document.visibilityState === "visible";
     if (isPageVisible.current) {
-      // Restart the animation loop if the page becomes visible, otherwise it will lag
       animationRef.current();
     }
   };
@@ -25,102 +24,115 @@ const HomePage = () => {
     let animationId;
     const fontLoader = new FontLoader();
 
-    // Scene
     const scene = new THREE.Scene();
-
-    // Load texture for Jupiter
     const textureLoader = new THREE.TextureLoader();
     const jupiterTexture = textureLoader.load("/moon_1k.jpeg");
-
-    // Create Jupiter
     const jupiterGeometry = new THREE.SphereGeometry(6, 64, 64);
-    const jupiterMaterial = new THREE.MeshBasicMaterial({ map: jupiterTexture });
+    
+    // Configure material for shadows
+    const jupiterMaterial = new THREE.MeshStandardMaterial({ 
+      map: jupiterTexture,
+      roughness: 0.7,
+      metalness: 0.0
+    });
+
     const jupiterMesh = new THREE.Mesh(jupiterGeometry, jupiterMaterial);
+    jupiterMesh.castShadow = true; // Enable casting shadows
     scene.add(jupiterMesh);
 
-    // Light
-    const light = new THREE.PointLight(0xffffff, 70, 100, 1.7);
-    light.position.set(10, 10, 10);
-    scene.add(light);
+    light.current = new THREE.PointLight(0xffffff, 70, 100, 1.7);
+    light.current.position.set(10, 10, 10);
+    light.current.castShadow = true; // Enable casting shadows
+    scene.add(light.current);
 
-    // Camera
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.z = 20;
-    scene.add(camera);
+    camera.current = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
+    camera.current.position.z = 20;
+    scene.add(camera.current);
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(2);
-    renderer.render(scene, camera);
+    
+    // Configure renderer for shadows
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    // Controls
-    const controls = new OrbitControls(camera, canvasRef.current);
+    renderer.render(scene, camera.current);
+
+    const controls = new OrbitControls(camera.current, canvasRef.current);
     controls.enableDamping = true;
     controls.enablePan = false;
     controls.enableZoom = true;
     controls.autoRotate = false;
 
-    // Add label for Jupiter
     let jupiterLabelMesh;
 
     fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
       const jupiterLabelGeometry = new TextGeometry("", { font, size: 0.5, height: 0.1 });
       const jupiterLabelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
       jupiterLabelMesh = new THREE.Mesh(jupiterLabelGeometry, jupiterLabelMaterial);
-      jupiterLabelMesh.position.set(7, 0, 0); // Adjust position relative to Jupiter
+      jupiterLabelMesh.position.set(7, 0, 0);
       scene.add(jupiterLabelMesh);
     });
 
-    // Resize
     const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
+      camera.current.aspect = window.innerWidth / window.innerHeight;
+      camera.current.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     };
 
     window.addEventListener("resize", handleResize);
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Animation loop
     const animate = () => {
       if (isPageVisible.current) {
-        // Continue the animation loop only if the page is visible
-        // Rotate Jupiter
         jupiterMesh.rotation.y += 0.002;
 
-        // Update Jupiter label's position
         if (jupiterLabelMesh) {
-          jupiterLabelMesh.position.set(7, 0, 0); // Adjust position relative to Jupiter
+          jupiterLabelMesh.position.set(7, 0, 0);
         }
 
         controls.update();
-        renderer.render(scene, camera);
+        renderer.render(scene, camera.current);
         animationId = requestAnimationFrame(animate);
       }
     };
 
-    animationRef.current = animate; // Save the reference to the initial loop
+    animationRef.current = animate;
 
     animate();
 
-    // Timeline animations
     const tl = gsap.timeline({ default: { duration: 1 } });
     tl.fromTo(jupiterMesh.scale, { z: 0, x: 0, y: 0 }, { z: 1, x: 1, y: 1 });
 
-    // Cleanup event listeners on component unmount
     return () => {
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       cancelAnimationFrame(animationId);
     };
-  }, []); // Empty dependency array ensures that useEffect runs only once
+  }, []);
+
+  const handleFullMoon = () => {
+    light.current.position.set(10, 10, 10);
+  };
+
+  const handleHalfMoon = () => {
+    light.current.position.set(-10, 10, 10);
+  };
+
+  const handleQuarterMoon = () => {
+    light.current.position.set(10, -10, 10);
+  };
 
   return (
     <>
-    <canvas ref={canvasRef} className="webgl" />
-    
-  </>
+      <canvas ref={canvasRef} className="webgl" />
+      <div>
+        {/* <button onClick={handleFullMoon}>Full Moon</button>
+        <button onClick={handleHalfMoon}>Half Moon</button>
+        <button onClick={handleQuarterMoon}>Quarter Moon</button> */}
+      </div>
+    </>
   );
 };
 

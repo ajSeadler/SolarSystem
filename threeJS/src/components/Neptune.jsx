@@ -46,7 +46,14 @@ const Neptune = () => {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.z = 15;
+
+    // Adjust camera position for mobile view
+    if (window.innerWidth < 600) {
+      camera.position.z = 45;
+    } else {
+      camera.position.z = 15;
+    }
+
     scene.add(camera);
 
     // Renderer
@@ -69,7 +76,7 @@ const Neptune = () => {
       const neptuneLabelGeometry = new TextGeometry("Neptune", { font, size: 0.5, height: 0.1 });
       const neptuneLabelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
       neptuneLabelMesh = new THREE.Mesh(neptuneLabelGeometry, neptuneLabelMaterial);
-      neptuneLabelMesh.position.set(neptuneRadius + 0.5, 0, 0); // Adjust position relative to Neptune
+      neptuneLabelMesh.position.set(neptuneRadius + 2, 0.7, 0); // Adjust position relative to Neptune
       scene.add(neptuneLabelMesh);
     });
 
@@ -94,7 +101,7 @@ const Neptune = () => {
 
         // Update Neptune label's position
         if (neptuneLabelMesh) {
-          neptuneLabelMesh.position.set(neptuneRadius + 0.5, 0, 0); // Adjust position relative to Neptune
+          neptuneLabelMesh.position.set(neptuneRadius + 1, 0.0, 0); // Adjust position relative to Neptune
         }
 
         controls.update();
@@ -121,37 +128,37 @@ const Neptune = () => {
 
   return (
     <>
-    <canvas ref={canvasRef} className="webgl" />
-    <Container maxWidth="sm" style={{ position: "absolute", bottom: "20px", left: "20px" }}>
-      <Paper elevation={0} style={{ padding: "20px", backgroundColor: "transparent", color: "white" }}>
-        <Typography variant="h6" gutterBottom>
-          Neptune Information
-        </Typography>
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Diameter:</span> 49,244 km
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Mass:</span> 1.024 × 10^26 kg
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Distance from the Sun:</span> 4.5 billion km
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Rotation Period:</span> About 16.11 hours
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Orbital Period:</span> About 165 Earth years
-          </li>
-        </ul>
-        <Typography variant="body2" color="white">
-          Neptune is the eighth and farthest-known planet from the Sun in the Solar System. It is the fourth-largest
-          planet by diameter and the third-largest by mass.
-        </Typography>
-        {/* Add more information as needed */}
-      </Paper>
-    </Container>
-  </>
+      <canvas ref={canvasRef} className="webgl" />
+      <Container maxWidth="sm" style={{ position: "absolute", bottom: "20px", left: "20px" }}>
+        <Paper elevation={0} style={{ padding: "20px", backgroundColor: "transparent", color: "white" }}>
+          <Typography variant="h6" gutterBottom>
+            Neptune Information
+          </Typography>
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Diameter:</span> 49,244 km
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Mass:</span> 1.024 × 10^26 kg
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Distance from the Sun:</span> 4.5 billion km
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Rotation Period:</span> About 16.11 hours
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Orbital Period:</span> About 165 Earth years
+            </li>
+          </ul>
+          <Typography variant="body2" color="white">
+            Neptune is the eighth and farthest-known planet from the Sun in the Solar System. It is the fourth-largest
+            planet by diameter and the third-largest by mass.
+          </Typography>
+          {/* Add more information as needed */}
+        </Paper>
+      </Container>
+    </>
   );
 };
 

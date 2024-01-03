@@ -58,12 +58,12 @@ const Uranus = () => {
     const createText = () => {
       const textGeometry = new TextGeometry("Uranus", {
         font: textFont,
-        size: 0.7,
+        size: 0.4,
         height: 0.1,
       });
       const textMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
       const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-      textMesh.position.set(uranusRadius + 2, 0, 0); // Adjust the position relative to Uranus
+      textMesh.position.set(uranusRadius + 0, uranusRadius + 0.0, 0); // Adjust the position relative to Uranus
       scene.add(textMesh);
     };
 
@@ -74,7 +74,11 @@ const Uranus = () => {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.z = 15;
+
+    // Adjust camera distance based on screen width for mobile view
+    const isMobile = window.innerWidth <= 768;
+    camera.position.z = isMobile ? 35 : 15;
+
     scene.add(camera);
 
     // Renderer

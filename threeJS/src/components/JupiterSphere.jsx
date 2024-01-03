@@ -45,7 +45,11 @@ const JupiterSphere = () => {
 
     // Camera
     const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.z = 20;
+
+    // Adjust camera distance based on screen width for mobile view
+    const isMobile = window.innerWidth <= 768;
+    camera.position.z = isMobile ? 60 : 20;
+
     scene.add(camera);
 
     // Renderer
@@ -118,43 +122,43 @@ const JupiterSphere = () => {
 
   return (
     <>
-    <canvas ref={canvasRef} className="webgl" />
-    <Container maxWidth="sm" style={{ position: "absolute", bottom: "20px", left: "20px" }}>
-      <Paper elevation={0} style={{ padding: "20px", backgroundColor: "transparent", color: "white" }}>
-        <Typography variant="h6" gutterBottom>
-          Jupiter Information
-        </Typography>
-        <ul style={{ listStyle: "none", padding: 2, margin: 2 }}>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Diameter:</span> 139,820 km
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Mass:</span> 1.898 × 10^27 kg
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Volume:</span> 1.4313 × 10^15 cubic kilometers
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Average Distance from the Sun:</span> 778 million km
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Orbital Period:</span> 11.86 Earth years
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Day Length:</span> About 9.9 Earth hours
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Average Temperature:</span> Approximately -145°C
-          </li>
-        </ul>
-        <Typography variant="body2" color="white">
-          Jupiter is the largest planet in our Solar System. It is a gas giant and is known for its
-          prominent bands of clouds and the Great Red Spot.
-        </Typography>
-        {/* Add more information as needed */}
-      </Paper>
-    </Container>
-  </>
+      <canvas ref={canvasRef} className="webgl" />
+      <Container maxWidth="sm" style={{ position: "absolute", bottom: "20px", left: "20px" }}>
+        <Paper elevation={0} style={{ padding: "20px", backgroundColor: "transparent", color: "white" }}>
+          <Typography variant="h6" gutterBottom>
+            Jupiter Information
+          </Typography>
+          <ul style={{ listStyle: "none", padding: 2, margin: 2 }}>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Diameter:</span> 139,820 km
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Mass:</span> 1.898 × 10^27 kg
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Volume:</span> 1.4313 × 10^15 cubic kilometers
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Average Distance from the Sun:</span> 778 million km
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Orbital Period:</span> 11.86 Earth years
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Day Length:</span> About 9.9 Earth hours
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Average Temperature:</span> Approximately -145°C
+            </li>
+          </ul>
+          <Typography variant="body2" color="white">
+            Jupiter is the largest planet in our Solar System. It is a gas giant and is known for its
+            prominent bands of clouds and the Great Red Spot.
+          </Typography>
+          {/* Add more information as needed */}
+        </Paper>
+      </Container>
+    </>
   );
 };
 
