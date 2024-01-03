@@ -107,6 +107,65 @@ const Mars = () => {
       scene.add(moon2LabelMesh);
     });
 
+    // Function to handle moon click
+    const handleMoonClick = (moonMesh, moonLabelMesh) => {
+      controls.enabled = false; // Disable OrbitControls during the moon zoom-in
+
+      const startCameraPosition = camera.position.clone();
+
+      // Zoom in
+      const zoomInAnimation = gsap.to(camera.position, {
+        duration: 1,
+        x: moonMesh.position.x,
+        y: moonMesh.position.y + 2, // Adjust the height for a better view
+        z: moonMesh.position.z,
+        onUpdate: () => {
+          controls.update(); // Update controls during the zoom-in
+        },
+        onComplete: () => {
+          // Follow the moon
+          gsap.to(camera.position, {
+            duration: 5,
+            x: moonMesh.position.x + 2, // Adjust the offset for a better view
+            onUpdate: () => {
+              camera.lookAt(moonMesh.position);
+              controls.target.copy(moonMesh.position);
+              controls.update(); // Update controls during the follow
+            },
+            onComplete: () => {
+              // Re-enable OrbitControls after the moon zoom-in and follow
+              controls.enabled = true;
+            },
+          });
+        },
+        onStart: () => {
+          controls.enabled = false; // Disable OrbitControls during the animation
+        },
+        onInterrupt: () => {
+          // Re-enable OrbitControls if the animation is interrupted
+          controls.enabled = true;
+        },
+      });
+
+      // Display moon label during the zoom-in
+      gsap.to(moonLabelMesh.material, { duration: 1, opacity: 1 });
+
+      // Cleanup after the animation completes or is interrupted
+      zoomInAnimation.then(() => {
+        controls.enabled = true; // Re-enable OrbitControls after the animation completes
+      }).catch(() => {
+        controls.enabled = true; // Re-enable OrbitControls if the animation is interrupted
+      });
+    };
+
+    // Add click event listeners to Moon 1
+    moon1Mesh.userData = { onClick: () => handleMoonClick(moon1Mesh, moon1LabelMesh) };
+    moon1Mesh.onClick = () => moon1Mesh.userData.onClick();
+
+    // Add click event listeners to Moon 2
+    moon2Mesh.userData = { onClick: () => handleMoonClick(moon2Mesh, moon2LabelMesh) };
+    moon2Mesh.onClick = () => moon2Mesh.userData.onClick();
+
     // Resize handler
     const handleResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -162,36 +221,36 @@ const Mars = () => {
 
   return (
     <>
-    <canvas ref={canvasRef} className="webgl" />
-    <Container maxWidth="sm" style={{ position: "absolute", bottom: "20px", left: "20px" }}>
-      <Paper elevation={0} style={{ padding: "20px", backgroundColor: "transparent", color: "white" }}>
-        <Typography variant="h6" gutterBottom>
-          Mars Information
-        </Typography>
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Average Temperature:</span> -80°F (-62°C)
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Size:</span> Diameter of approximately 6,779 kilometers (4,212 miles)
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Distance from the Sun:</span> Approximately 227.9 million kilometers (141.6 million miles)
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Orbital Period:</span> About 687 Earth days
-          </li>
-          <li>
-            <span style={{ fontWeight: "bold" }}>Rotation Period:</span> About 24.6 hours
-          </li>
-        </ul>
-        <Typography variant="body2" color="white">
-          Mars is the fourth planet from the Sun and the second-smallest planet in the Solar System. It is often referred to as the "Red Planet" due to its reddish appearance.
-        </Typography>
-        {/* Add more information as needed */}
-      </Paper>
-    </Container>
-  </>
+      <canvas ref={canvasRef} className="webgl" />
+      <Container maxWidth="sm" style={{ position: "absolute", bottom: "20px", left: "20px" }}>
+        <Paper elevation={0} style={{ padding: "20px", backgroundColor: "transparent", color: "white" }}>
+          <Typography variant="h6" gutterBottom>
+            Mars Information
+          </Typography>
+          <ul style={{ listStyle: "none", padding: 0 }}>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Average Temperature:</span> -80°F (-62°C)
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Size:</span> Diameter of approximately 6,779 kilometers (4,212 miles)
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Distance from the Sun:</span> Approximately 227.9 million kilometers (141.6 million miles)
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Orbital Period:</span> About 687 Earth days
+            </li>
+            <li>
+              <span style={{ fontWeight: "bold" }}>Rotation Period:</span> About 24.6 hours
+            </li>
+          </ul>
+          <Typography variant="body2" color="white">
+            Mars is the fourth planet from the Sun and the second-smallest planet in the Solar System. It is often referred to as the "Red Planet" due to its reddish appearance.
+          </Typography>
+          {/* Add more information as needed */}
+        </Paper>
+      </Container>
+    </>
   );
 };
 

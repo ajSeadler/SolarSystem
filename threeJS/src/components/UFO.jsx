@@ -1,11 +1,14 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { FontLoader } from "three/addons/loaders/FontLoader.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
 import gsap from "gsap";
-import { Link } from 'react-router-dom';
+import Container from "@mui/material/Container";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 
-const Homepage = () => {
+const HomePage = () => {
   const canvasRef = useRef();
   const animationRef = useRef();
   const isPageVisible = useRef(true);
@@ -13,101 +16,112 @@ const Homepage = () => {
   const handleVisibilityChange = () => {
     isPageVisible.current = document.visibilityState === "visible";
     if (isPageVisible.current) {
+      // Restart the animation loop if the page becomes visible, otherwise it will lag
       animationRef.current();
     }
   };
 
   useEffect(() => {
     let animationId;
+    const fontLoader = new FontLoader();
 
+    // Scene
     const scene = new THREE.Scene();
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-    scene.add(ambientLight);
+    // Load texture for Jupiter
+    const textureLoader = new THREE.TextureLoader();
+    const jupiterTexture = textureLoader.load("/moon_1k.jpeg");
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-    directionalLight.position.set(25, 25, 25); // Adjust the position of the light
-    scene.add(directionalLight);
+    // Create Jupiter
+    const jupiterGeometry = new THREE.SphereGeometry(6, 64, 64);
+    const jupiterMaterial = new THREE.MeshBasicMaterial({ map: jupiterTexture });
+    const jupiterMesh = new THREE.Mesh(jupiterGeometry, jupiterMaterial);
+    scene.add(jupiterMesh);
 
-    const loader = new GLTFLoader();
-    let ufoModel;
+    // Light
+    const light = new THREE.PointLight(0xffffff, 70, 100, 1.7);
+    light.position.set(10, 10, 10);
+    scene.add(light);
 
-    loader.load("/le-solar-systme-v4.glb", (gltf) => {
-      ufoModel = gltf.scene;
-      scene.add(ufoModel);
+    // Camera
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
+    camera.position.z = 20;
+    scene.add(camera);
 
-      ufoModel.position.set(0, 5, 0);
-      ufoModel.scale.set(0.1, 0.1, 0.1);
-      ufoModel.rotation.y = Math.PI / 2;
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(2);
+    renderer.render(scene, camera);
 
-      const tl = gsap.timeline({ default: { duration: 0.1 } });
-      tl.fromTo(ufoModel.scale, { z: 0, x: 0, y: 0 }, { z: 1, x: 1, y: 1 });
+    // Controls
+    const controls = new OrbitControls(camera, canvasRef.current);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+    controls.enableZoom = true;
+    controls.autoRotate = false;
 
-      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-      camera.position.z = 55;
-      scene.add(camera);
+    // Add label for Jupiter
+    let jupiterLabelMesh;
 
-      const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(2);
-      renderer.render(scene, camera);
-
-      const controls = new OrbitControls(camera, canvasRef.current);
-      controls.enableDamping = true;
-      controls.enablePan = false;
-      controls.enableZoom = false;
-      controls.autoRotate = false;
-
-      const handleResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      };
-
-      window.addEventListener("resize", handleResize);
-      document.addEventListener("visibilitychange", handleVisibilityChange);
-
-      const animate = () => {
-        if (isPageVisible.current) {
-          if (ufoModel) {
-            ufoModel.rotation.y += 0.01;
-          }
-
-          controls.update();
-          renderer.render(scene, camera);
-          animationId = requestAnimationFrame(animate);
-        }
-      };
-
-      animationRef.current = animate;
-
-      animate();
-
-      return () => {
-        window.removeEventListener("resize", handleResize);
-        document.removeEventListener("visibilitychange", handleVisibilityChange);
-        cancelAnimationFrame(animationId);
-      };
+    fontLoader.load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json", (font) => {
+      const jupiterLabelGeometry = new TextGeometry("", { font, size: 0.5, height: 0.1 });
+      const jupiterLabelMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      jupiterLabelMesh = new THREE.Mesh(jupiterLabelGeometry, jupiterLabelMaterial);
+      jupiterLabelMesh.position.set(7, 0, 0); // Adjust position relative to Jupiter
+      scene.add(jupiterLabelMesh);
     });
 
-    // No return statement here
+    // Resize
+    const handleResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    };
 
+    window.addEventListener("resize", handleResize);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Animation loop
+    const animate = () => {
+      if (isPageVisible.current) {
+        // Continue the animation loop only if the page is visible
+        // Rotate Jupiter
+        jupiterMesh.rotation.y += 0.002;
+
+        // Update Jupiter label's position
+        if (jupiterLabelMesh) {
+          jupiterLabelMesh.position.set(7, 0, 0); // Adjust position relative to Jupiter
+        }
+
+        controls.update();
+        renderer.render(scene, camera);
+        animationId = requestAnimationFrame(animate);
+      }
+    };
+
+    animationRef.current = animate; // Save the reference to the initial loop
+
+    animate();
+
+    // Timeline animations
+    const tl = gsap.timeline({ default: { duration: 1 } });
+    tl.fromTo(jupiterMesh.scale, { z: 0, x: 0, y: 0 }, { z: 1, x: 1, y: 1 });
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      cancelAnimationFrame(animationId);
+    };
   }, []); // Empty dependency array ensures that useEffect runs only once
 
   return (
     <>
-      <canvas ref={canvasRef} className="webgl" />
-      {/* <h1 style={{ position: "absolute", top: "20px", left: "50%", transform: "translateX(-50%)", color: "white" }}>
-        Welcome to the Milky Way!
-      </h1>
-      <div style={{ display: "flex", justifyContent: "center", gap: "10px", color: "white", fontSize:'2rem' }}>
-        <Link to="/" style={{ textDecoration: 'none', color:'#fff' }}><h6>Home</h6></Link>
-        <Link to="/sun" style={{ textDecoration: 'none', color:'#fff' }}><h6>Sun</h6></Link>
-        <Link to="/mercury" style={{ textDecoration: 'none', color:'#fff' }}><h6>Mercury</h6></Link>
-        {/* ... Repeat for other planets ... */}
-      {/* </div> */}
-    </>
+    <canvas ref={canvasRef} className="webgl" />
+    
+  </>
   );
 };
 
-export default Homepage;
+export default HomePage;
