@@ -1,6 +1,6 @@
 # Solar System Exploration
 
-![Mars](link_to_mars_screenshot.jpg)
+![Mars](solar.jpg)
 
 ## Overview
 
