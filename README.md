@@ -1,6 +1,7 @@
 # Solar System Exploration
 
-![Mars](solar.jpg)
+![solar](https://github.com/ajSeadler/SolarSystem/assets/134530749/41ecc990-287d-412c-889c-34ddaa6bbbe9)
+
 
 ## Overview
 
