@@ -1,6 +1,6 @@
 # Solar System Exploration
 
-![solar](https://github.com/ajSeadler/SolarSystem/assets/134530749/41ecc990-287d-412c-889c-34ddaa6bbbe9)
+![solar](https://github.com/ajSeadler/SolarSystem/assets/134530749/6da9f4d1-a6a6-464b-b3b8-ec37a55631c1)
 
 
 ## Overview
@@ -9,7 +9,7 @@ This project is a web-based application that provides an interactive 3D visualiz
 
 ## Technologies Used
 
-- **React:** The project is built using the React library for creating interactive user interfaces.
+- **React:** The project is built using the React library.
 
 - **Three.js:** A JavaScript library used for creating 3D graphics, enabling the rendering of celestial bodies in the browser.
 
