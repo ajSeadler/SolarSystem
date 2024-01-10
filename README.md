@@ -25,12 +25,6 @@ This project is a web-based application that provides an interactive 3D visualiz
 
 - **Responsive Design:** The user interface is designed to be responsive, ensuring a seamless experience on different devices.
 
-## Additional Information
-
-- For detailed information about each planet, check the corresponding information panels provided in the UI.
-
-- The application uses WebGL for rendering, and it's recommended to use a browser that supports WebGL for the best experience (like Chrome).
-
 ## Acknowledgments
 
 - [Three.js](https://threejs.org/): A fantastic library for 3D graphics in the browser.
